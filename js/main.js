@@ -61,12 +61,16 @@ function fisherYates(array) {
 
 
   //04: now lets examine functionality below:
+  
+    // simple imaginary first hand deal:
+    console.log(fisherYates(cards));
+    console.log("Dealers hand: \n" + cards[0].name + "\n" + cards[1].name);
+    console.log("Your hand: \n" + cards[2].name + "\n" + cards[3].name +"\n");
 
-  console.log(cards);
+  // calculate risks and chances for first hand of 52 shuffled cards:
+  var riskGeneral = (1 / cards.length) *100;
+  console.log(riskGeneral.toFixed(2) + "% per " + cards.length +" card");
 
-  console.log(fisherYates(cards));
-  console.log("Dealers hand: \n" + cards[0].name + "\n" + cards[1].name);
-  console.log("Your hand: \n" + cards[2].name + "\n" + cards[3].name +"\n");
 
 
 
