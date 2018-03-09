@@ -1,0 +1,12 @@
+
+html {
+ font-family: 'Inconsolata', monospace;
+ font-size: 133%;
+ font-size: calc(1.14em + 0.2vw + 0.2vh + 0.1vmin);
+ color: hsl(0, 0%, 58.6%);
+ background: black;
+}
+body {
+ line-height: 1rem;
+ font-size: 0.8rem;
+}
