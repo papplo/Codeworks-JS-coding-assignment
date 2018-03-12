@@ -4,7 +4,8 @@
   let spread = ['1','2','3','4','5','6','7','8','9','10','J','Q','K'];
   let colour = ['Hearts', 'Diamonds', 'Spades', 'Clubs'];
   let dealLimit = spread.length * colour.length;
-  let cards  = [], playerTotal, dealerTotal;
+  let cards  = [], playerTotal, dealerTotal, dealButton = "", standButton = "";
+
   /* I would like to get the following data structure: (Array with Objects), arrays can make use of the .push() and .pop()-methods which operate rather fast. Arrays store an order in keys, which also can be randomized (or shuffled)...
   cards [
       {colour: Hearts, value: 1}, {colour: Hearts, value: 2}...
@@ -23,7 +24,7 @@ function setOfCards() {
     // According to css-tricks this could do the job: https://css-tricks.com/understanding-javascript-constructors/
     Object.defineProperty(this, "name", {
       get: function() {
-        return `${this.spread} of ${this.colour} has value of ${this.value}`;
+        return `${this.spread} of ${this.colour}`;
       },
       set: function(newName) {
         name = newName;
@@ -54,8 +55,9 @@ function setOfCards() {
 }
 
 //04: lets deal a hand for player and a hand for dealer
-function dealHand(){
-
+function dealHand(who){
+  let turn = who;
+  console.log(turn);
   if (dealLimit > 48) {
     // first deal: two cards each
     playerHand = cards.splice(-2, 2);
@@ -65,22 +67,21 @@ function dealHand(){
     console.log(playerHand);
       // display cards in DOM
       document.querySelector("div.player span.hand").innerHTML = `
-      Your hand: ${playerHand[0].name}, <br /> ${playerHand[1].name}<br />`;
+      Your hand: ${playerHand[0].name}, ${playerHand[1].name}<br />`;
       document.querySelector("div.player span.total").innerHTML =`
       You have: ${playerTotal}`;
 
-      document.querySelector("div.dealer span.hand").innerHTML = `Dealers hand: ${dealerHand[0].name},  <br /> ${dealerHand[1].name} <br />`;
+      document.querySelector("div.dealer span.hand").innerHTML = `Dealers hand: ${dealerHand[0].name},  ${dealerHand[1].name} <br />`;
       document.querySelector("div.dealer span.total").innerHTML =`
       Dealer has: ${dealerTotal}`;
 
     // reset limit
     dealLimit = cards.length;
     console.log(dealLimit + "left");
-
     document.querySelector("a.get").style.visibility = 'visible';
 
-  } else if (dealLimit <= 48 && playerTotal < 21){
-
+  } else
+  if (dealLimit <= 48 && playerTotal < 21 && turn == "player"){
     // players turn: hit or stand:
     get = cards.splice(-1,1);
     dealLimit--;
@@ -97,29 +98,69 @@ function dealHand(){
 
     //console.log("Removed" + cards.splice(-1,1));
     console.log(cards.length + "left");
+  } else
+    if (playerTotal <= 21 && turn == "dealer" && dealerTotal <= 17){
+      console.log("now into the finish")
+      // now player stands and has not busted
+      playerPoints = playerTotal;
+      // delears turn: hit or stand:
+      get = cards.splice(-1,1);
+      dealLimit--;
+      playerHand = get.concat(dealerHand);
+      console.log(dealerHand);
+      dealerTotal += dealerHand[0].value;
+
+        // display hit in DOM
+        document.querySelector("div.dealer span.hand").innerHTML += `
+        ${dealerHand[0].name}<br />`;
+        document.querySelector("div.dealer span.total").innerHTML =`
+        Dealer has: ${dealerTotal}`;
+
+
+      //console.log("Removed" + cards.splice(-1,1));
+      console.log(cards.length + "left");
+
+  } else {
+    console.log("WHO WINS?");
+    calculateWin(playerTotal,dealerTotal);
   }
 
-
-
-
 }
 
-function stand(){
-  // now player stands and has not busted
+function calculateWin(player, dealer) {
+  if (player > dealer) {
+    standButton.innerHTML = "<span style=\"color:green;\">Player WINS/ Case 1</span>";
+    setTimeout(function(){location.reload(false);}, 1500);
+  }
+    dealButton.innerHTML = "<span style=\"color:red;\">Dealer WINS /Case 2</span>";
+    setTimeout(function(){location.reload(false);}, 1500);
 }
 
-let dealButton = "";
 //05: lets track our game by adding an eventlistener that acts on our ui according to game rules
 function onButtonDeal(){
   dealButton = document.querySelector("a.deal");
   dealButtonClick = dealButton.addEventListener('click', function(){
-    if (dealerTotal >= 21) {
-      console.log("Dealer has natural, you LOSE!");
-    } else if (playerTotal > 21) {
+    if (playerTotal > 21) {
       dealButton.innerHTML = "<span style=\"color:red;\">you busted biatch!</span>";
       setTimeout(function(){location.reload(false);}, 1500);
     } else if (dealLimit != 0) {
-			dealHand();
+			dealHand('player');
 		}
   });
+
+  standButton = document.querySelector("a.stand");
+  standButtonclick = standButton.addEventListener('click', function(){
+    //document.querySelector("a.deal").style.visibility = 'hidden';
+    if (dealerTotal >= 17 && dealerTotal >= playerTotal) {
+      dealButton.innerHTML = "<span style=\"color:red;\">Dealer WINS /Case 3</span>";
+      setTimeout(function(){location.reload(false);}, 1500);
+    } else if (dealerTotal >= 17 && playerTotal > dealerTotal ){
+      standButton.innerHTML = "<span style=\"color:green;\">Player WINS/ Case 4</span>";
+      setTimeout(function(){location.reload(false);}, 1500);
+    } else if (dealLimit != 0) {
+      dealHand('dealer');
+      console.log("dealer recieves");
+    }
+  });
+
 };
