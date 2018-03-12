@@ -4,7 +4,7 @@
   let spread = ['1','2','3','4','5','6','7','8','9','10','J','Q','K'];
   let colour = ['Hearts', 'Diamonds', 'Spades', 'Clubs'];
   let dealLimit = spread.length * colour.length;
-  let cards  = [];
+  let cards  = [], playerTotal, dealerTotal;
   /* I would like to get the following data structure: (Array with Objects), arrays can make use of the .push() and .pop()-methods which operate rather fast. Arrays store an order in keys, which also can be randomized (or shuffled)...
   cards [
       {colour: Hearts, value: 1}, {colour: Hearts, value: 2}...
@@ -58,11 +58,11 @@ function dealHand(){
 
   if (dealLimit > 48) {
     // first deal: two cards each
-    let playerHand = cards.splice(-2, 2);
+    playerHand = cards.splice(-2, 2);
     playerTotal = playerHand[0].value + playerHand[1].value;
-    let dealerHand = cards.splice(-2, 2);
+    dealerHand = cards.splice(-2, 2);
     dealerTotal = dealerHand[0].value + dealerHand[1].value;
-
+    console.log(playerHand);
       // display cards in DOM
       document.querySelector("div.player span.hand").innerHTML = `
       Your hand: ${playerHand[0].name}, <br /> ${playerHand[1].name}<br />`;
@@ -77,16 +77,20 @@ function dealHand(){
     dealLimit = cards.length;
     console.log(dealLimit + "left");
 
-  } else if (dealLimit <= 48 && playerTotal <= 22){
+    document.querySelector("a.get").style.visibility = 'visible';
+
+  } else if (dealLimit <= 48 && playerTotal < 21){
 
     // players turn: hit or stand:
-    let get = cards.splice(-1,1);
-    playerHand.push(get);
-    playerTotal += playerHand[0].value;
+    get = cards.splice(-1,1);
+    dealLimit--;
+    playerHand = get.concat(playerHand);
     console.log(playerHand);
+    playerTotal += playerHand[0].value;
+
       // display hit in DOM
       document.querySelector("div.player span.hand").innerHTML += `
-      ${playerHand[1].name}<br />`;
+      ${playerHand[0].name}<br />`;
       document.querySelector("div.player span.total").innerHTML =`
       You have: ${playerTotal}`;
 
@@ -99,15 +103,23 @@ function dealHand(){
 
 
 }
+
+function stand(){
+  // now player stands and has not busted
+}
+
 let dealButton = "";
 //05: lets track our game by adding an eventlistener that acts on our ui according to game rules
 function onButtonDeal(){
-  let dealButton = document.querySelector("a.deal");
-  let dealButtonClick = dealButton.addEventListener('click', function(){
-    if(dealLimit > 1) {
-			dealHand();
-		} else if (dealerTotal >= 21) {
+  dealButton = document.querySelector("a.deal");
+  dealButtonClick = dealButton.addEventListener('click', function(){
+    if (dealerTotal >= 21) {
       console.log("Dealer has natural, you LOSE!");
-    }
+    } else if (playerTotal > 21) {
+      dealButton.innerHTML = "<span style=\"color:red;\">you busted biatch!</span>";
+      setTimeout(function(){location.reload(false);}, 1500);
+    } else if (dealLimit != 0) {
+			dealHand();
+		}
   });
 };
