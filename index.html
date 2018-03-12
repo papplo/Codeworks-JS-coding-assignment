@@ -12,10 +12,24 @@
     </head>
   <body>
 
+  <a href="#" class="deal">Deal a Hand!</a>
+
+  <div class="dealer"></div>
+
+  <div class="player"></div>
+
   <script type="text/javascript">
       function autorun() {
+
         // instantiate card array
         setOfCards();
+
+        // This acts as a counter and also removes last cards of array with pop.
+        dealHand();
+
+
+        onButtonDeal();
+
       }
     if (window.addEventListener) window.addEventListener("load", autorun, false);
     else if (window.attachEvent) window.attachEvent("onload", autorun);
