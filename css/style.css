@@ -11,7 +11,7 @@ body {
  font-size: 0.8rem;
 }
 
-a.deal, a.stand {
+a.deal, a.stand, a.winlose {
   display: block;
   margin: 1em auto;
   text-align: center;
@@ -22,6 +22,19 @@ a.deal, a.stand {
   border-radius: 15px;
   color: white;
   font-weight: 400;
+}
+
+img.startimage {
+  position: relative;
+  margin: 0 auto;
+  display: block;
+  width: 300px;
+}
+
+#eval {
+  text-align: center;
+  display: block;
+  z-index: 999;
 }
 
 .dealer, .player{
