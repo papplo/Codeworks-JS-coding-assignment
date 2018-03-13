@@ -5,7 +5,7 @@
   let colour = ['heart', 'diamond', 'spade', 'club'];
   let dealLimit = spread.length * colour.length;
   let cards  = [], playerTotal, dealerTotal, dealButton = "", standButton = "";
-  let src = "node_modules/svg-cards/png/1x/";
+  let src = "img/";
   /* I would like to get the following data structure: (Array with Objects), arrays can make use of the .push() and .pop()-methods which operate rather fast. Arrays store an order in keys, which also can be randomized (or shuffled)...
   cards [
       {colour: Hearts, value: 1}, {colour: Hearts, value: 2}...
