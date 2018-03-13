@@ -8,13 +8,11 @@
 
     <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
     <link rel="stylesheet" href="css/style.css" type="text/css">
-    <link rel="stylesheet" href="css/animate.min.css">
 
     <script type="text/javascript" src="js/main.js"></script>
     </head>
   <body>
 
-  <a href="#" class="deal">Deal a Hand!</a>
 
   <div class="dealer">
     <span class="hand"></span>
@@ -24,21 +22,16 @@
   <div class="player">
     <span class="hand"></span>
     <span class="total"></span>
-    <a href="#" class="get stand" style="visibility:hidden;">Stand</a>
   </div>
+
+  <a href="#" class="deal">Start Game</a>
+  <a href="#" class="get stand" style="visibility:hidden;">Stand</a>
+
 
   <script type="text/javascript">
       function autorun() {
-
-        // instantiate card array
         setOfCards();
-
-        // This acts as a counter and also removes last cards of array with pop.
-        //dealHand();
-
-
         onButtonDeal();
-
       }
     if (window.addEventListener) window.addEventListener("load", autorun, false);
     else if (window.attachEvent) window.attachEvent("onload", autorun);
