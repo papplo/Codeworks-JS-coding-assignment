@@ -10,7 +10,9 @@ let
     dealerTotal,
     dealButton = "",
     standButton = "",
-    src = "img/";
+    winlose = "",
+    src = "img/",
+    turn = "";
 
 function setOfCards() {
   function Card(spread,colour){
@@ -18,11 +20,11 @@ function setOfCards() {
     this.colour = colour;
     this.png = `<img class="card animated fadeInRight" src="${src}${spread}_${colour}.png">`;
     this.value = (spread <= 10 ? spread*1 : 10*1);
-    if (this.value == 1) {this.altValue = 11;}
+    if (this.value == 1) {this.value = 11; this.altValue = 1;}
 
     Object.defineProperty(this, "name", {
       get: function() {
-        return `${this.spread} of ${this.colour}`;
+        return `${this.spread} of ${this.colour} `;
       },
       set: function(newName) {
         name = newName;
@@ -45,15 +47,21 @@ function setOfCards() {
     }
   }
   fisherYates(cards);
+  //cards.reverse();
 }
 
 function dealHand(who){
   let
-    turn = who,
+    board = document.querySelector("img.startimage"),
     playerBoard = document.querySelector("div.player span.hand"),
     playerBoardTotal = document.querySelector("div.player span.total"),
     dealerBoard = document.querySelector("div.dealer span.hand"),
     dealerBoardTotal = document.querySelector("div.dealer span.total");
+
+    winlose = document.querySelector("div#eval");
+    turn = who;
+
+    board.style.display = 'none';
 
   if (dealLimit > 48) {
     playerHand = cards.splice(-2, 2);
@@ -70,14 +78,18 @@ function dealHand(who){
     document.querySelector("a.deal").innerHTML = 'Hit';
     document.querySelector("a.get").style.visibility = 'visible';
 
+    catchAce('dealer');
+    catchAce('player');
+
   } else
-  if (dealLimit <= 48 && playerTotal < 21 && turn == "player"){
+  if (dealLimit <= 48 && playerTotal != 21 && turn == "player"){
     get = cards.splice(-1,1);
     dealLimit--;
     playerHand = get.concat(playerHand);
     playerTotal += playerHand[0].value;
     playerBoard.innerHTML += `${playerHand[0].png}`;
     playerBoardTotal.innerHTML =`You have: ${playerTotal}`;
+    catchAce('player');
 
   } else
   if (playerTotal <= 21 && turn == "dealer" && dealerTotal <= 17){
@@ -88,9 +100,50 @@ function dealHand(who){
     dealerTotal += dealerHand[0].value;
     dealerBoard.innerHTML += `${dealerHand[0].png}`;
     dealerBoardTotal.innerHTML =`Dealer has: ${dealerTotal}`;
+    catchAce('dealer');
+
   }
   else {
+    catchAce('dealer');
+    catchAce('player');
     calculateWin(playerTotal,dealerTotal);
+  }
+
+}
+
+
+function catchAce(who) {
+  console.log(turn);
+  if (who == "player") {
+    if (playerHand[0].altValue || playerHand[1].altValue) {
+      console.log("Player has ACE");
+      if (playerTotal === 21 && dealerTotal != 21 && playerHand.length == 2) {
+        winlose.innerHTML = "<a class=\"winlose fadeInRight animated\" style=\"color:green;\">Player WINS With BlackJack</a>";
+        exit(3500);
+      } else
+      if (playerTotal > 21) {
+        console.log("You bust, dont worry you have an ACE");
+        playerTotal -= 10;
+        console.log(playerTotal + " -10 ")
+        document.querySelector("div.player span.total").innerHTML =`You have: ${playerTotal}`;
+        return;
+      }
+    }
+  } else {
+    if (dealerHand[0].altValue || dealerHand[1].altValue) {
+      console.log("Dealer has ACE");
+      if (dealerTotal === 21) {
+        winlose.innerHTML = "<a class=\"winlose fadeInRight animated\" style=\"color:red;\">Dealer WINS With BlackJack</a>";
+        exit(3500);
+      } else
+      if (dealerTotal > 21){
+        console.log("Dealer bust, dont worry you have an ACE");
+        dealerTotal -= 10;
+        console.log(dealerTotal + " -10 ")
+        document.querySelector("div.dealer span.total").innerHTML =`Dealer has: ${dealerTotal}`;
+        return;
+      }
+    }
   }
 
 }
@@ -103,19 +156,20 @@ function exit(time){
 
 function calculateWin(player, dealer) {
   if ( player > dealer && dealer >= 22 ) {
-    standButton.innerHTML = "<span style=\"color:green;\">Player WINS</span>";
+    winlose.innerHTML = "<span style=\"color:green;\">Player WINS</span>";
     exit(2500);
   } else
   if ( dealer > player && !(dealer >= 22) ) {
-    dealButton.innerHTML = "<span style=\"color:red;\">Dealer WINS</span>";
+    winlose.innerHTML = "<span style=\"color:red;\">Dealer WINS</span>";
     exit(2500);
   } else
   if ( dealer >= 22 ){
-    standButton.innerHTML = "<span style=\"color:green;\">Player WINS</span>";
+    winlose.innerHTML = "<a class=\"winlose fadeInRight animated\" style=\"color:green;\">Player WINS</a>";
     exit(2500);
   } else
   if ( playerTotal > 21 ) {
-    dealButton.innerHTML = `<span style=\"color:red;\">You bust at ${playerTotal}</span>`;
+    catchAce('player');
+    winlose.innerHTML = `<a class=\"winlose fadeInRight animated\" style=\"color:green;\">You bust at ${playerTotal}</a>`;
     exit(2500);
   } else {
     dealHand('dealer');
@@ -126,7 +180,8 @@ function onButtonDeal(){
   dealButton = document.querySelector("a.deal");
   dealButtonClick = dealButton.addEventListener('click', function(){
     if (playerTotal > 21) {
-      dealButton.innerHTML = `<span style=\"color:red;\">You bust at ${playerTotal}</span>`;
+      catchAce('player');
+      winlose.innerHTML = `<a class=\"winlose fadeInRight animated\" style=\"color:red;\">You bust at ${playerTotal}</a>`;
       exit(2500);
     } else
     if (dealLimit != 0) {
@@ -136,14 +191,13 @@ function onButtonDeal(){
 
   standButton = document.querySelector("a.stand");
   standButtonclick = standButton.addEventListener('click', function(){
-
     document.querySelector("a.deal").style.visibility = 'hidden';
     if (dealerTotal >= 17 && dealerTotal >= playerTotal && !(dealerTotal > 21)) {
-      dealButton.innerHTML = "<span style=\"color:red;\">Dealer WINS</span>";
+      winlose.innerHTML = "<a class=\"winlose fadeInRight animated\" style=\"color:red;\">Dealer WINS</a>";
       exit(2500);
     } else
     if (dealerTotal >= 17 && playerTotal > dealerTotal && !(playerTotal > 21)){
-      standButton.innerHTML = "<span style=\"color:green;\">Player WINS</span>";
+      winlose.innerHTML = "<a class=\"winlose fadeInRight animated\" style=\"color:green;\">Player WINS</a>";
       exit(2500);
     } else
     if (dealLimit != 0) {
