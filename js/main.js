@@ -47,7 +47,6 @@ function setOfCards() {
     }
   }
   fisherYates(cards);
-  //cards.reverse();
 }
 
 function dealHand(who){
@@ -60,7 +59,6 @@ function dealHand(who){
 
     winlose = document.querySelector("div#eval");
     turn = who;
-
     board.style.display = 'none';
 
   if (dealLimit > 48) {
@@ -93,6 +91,7 @@ function dealHand(who){
 
   } else
   if (playerTotal <= 21 && turn == "dealer" && dealerTotal <= 17){
+    document.querySelector("a.stand").style.visibility = 'hidden';
     playerPoints = playerTotal;
     get = cards.splice(-1,1);
     dealLimit--;
@@ -101,6 +100,10 @@ function dealHand(who){
     dealerBoard.innerHTML += `${dealerHand[0].png}`;
     dealerBoardTotal.innerHTML =`Dealer has: ${dealerTotal}`;
     catchAce('dealer');
+
+    setTimeout(function(){
+      dealHand('dealer');
+    }, 800);
 
   }
   else {
@@ -111,9 +114,7 @@ function dealHand(who){
 
 }
 
-
 function catchAce(who) {
-  console.log(turn);
   if (who == "player") {
     if (playerHand[0].altValue || playerHand[1].altValue) {
       console.log("Player has ACE");
@@ -127,6 +128,10 @@ function catchAce(who) {
         console.log(playerTotal + " -10 ")
         document.querySelector("div.player span.total").innerHTML =`You have: ${playerTotal}`;
         return;
+      } else
+      if (playerTotal === dealerTotal && dealerTotal >= 17){
+        console.log("Player pauses");
+
       }
     }
   } else {
@@ -155,12 +160,13 @@ function exit(time){
 }
 
 function calculateWin(player, dealer) {
-  if ( player > dealer && dealer >= 22 ) {
+  document.querySelector("a.stand").style.visibility = 'hidden';
+  if ( player > dealer && dealer >= 17 && !(player >= 22) ) {
     winlose.innerHTML = "<span style=\"color:green;\">Player WINS</span>";
     exit(2500);
   } else
-  if ( dealer > player && !(dealer >= 22) ) {
-    winlose.innerHTML = "<span style=\"color:red;\">Dealer WINS</span>";
+  if ( dealer >= player && !(dealer >= 22) ) {
+    winlose.innerHTML = "<a class=\"winlose fadeInRight animated\" style=\"color:red;\">Dealer WINS</a>";
     exit(2500);
   } else
   if ( dealer >= 22 ){
@@ -169,7 +175,7 @@ function calculateWin(player, dealer) {
   } else
   if ( playerTotal > 21 ) {
     catchAce('player');
-    winlose.innerHTML = `<a class=\"winlose fadeInRight animated\" style=\"color:green;\">You bust at ${playerTotal}</a>`;
+    winlose.innerHTML = `<a class=\"winlose fadeInRight animated\" style=\"color:red;\">You bust at ${playerTotal}</a>`;
     exit(2500);
   } else {
     dealHand('dealer');
