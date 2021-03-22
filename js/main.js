@@ -1,4 +1,4 @@
-// Build a simple Blackjack game using HTML, CSS, JavaScript and jQuery. It’s a single page, that opens in the browser, and lets the user play. The rules for Blackjack are here, it’s a relatively simple game. Your implementation just needs to give the "hit" and "stand" options to the player (no betting), feel free to figure out what UI you prefer, as long as the user understands what is happening and can play multiple games.
+// Build a simple Blackjack game...
 
 const
     spread = ['1','2','3','4','5','6','7','8','9','10','jack','queen','king'],
