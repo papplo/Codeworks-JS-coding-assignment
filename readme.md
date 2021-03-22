@@ -1,4 +1,4 @@
-### Codeworks coding assignment
+### Bootcamp coding assignment
 
 The next and last step to admission will be to write a little web-application to show your proficiency with HTML/CSS/JS. Check the following three options and pick one of them (whichever you like best):
 
